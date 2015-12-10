@@ -6,7 +6,8 @@ public class Main{
 
 
     public static void main(String[] args) {
-//
+
+
 //        String secretCode ;
 //
 //        do {
@@ -20,8 +21,9 @@ public class Main{
 //            }
 //        }while (!secretCode.equals("abc"));
 
-        String documentName = (String) JOptionPane.showInputDialog(null,"Enter the file name:","New File", JOptionPane.INFORMATION_MESSAGE);
+//        String documentName = (String) JOptionPane.showInputDialog(null,"Enter the file name:","New File", JOptionPane.INFORMATION_MESSAGE);
 
-        Document doc = new Document(documentName);
+        Document doc = new Document("test.java");
+
     }
 }

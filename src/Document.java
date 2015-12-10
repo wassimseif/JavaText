@@ -1,8 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 
-public class Document extends JFrame {
+public class Document extends JFrame implements ActionListener {
     private JTextArea textArea;
     private JMenuBar menuBar;
     private JMenu menuFile, menuEdit, menuJava;
@@ -37,20 +38,25 @@ public class Document extends JFrame {
         addingTheMenus();
         settingUpTheMenuItems();
         addingTheMenuItems();
-
+        addActionListenerstoMenuItems();
 
 
     }
 
 
 
+    private void addActionListenerstoMenuItems(){
+        newFileMenuItem.addActionListener(this);
+
+
+    }
 
     private void setTextAreaProperties(){
 
         textArea.setBackground(Color.gray);
         textArea.setSelectedTextColor(Color.blue);
 
-        Font font = new Font("Verdana", Font.PLAIN, 14);
+        Font font = new Font("Verdana", Font.PLAIN, 16);
         textArea.setFont(font);
         textArea.setForeground(Color.white);
 
@@ -120,6 +126,15 @@ public class Document extends JFrame {
 
 
 
-    
+    public void actionPerformed(ActionEvent e) {
+        JMenuItem menuItemSelected = (JMenuItem) e.getSource();
+
+        if (menuItemSelected == newFileMenuItem){
+            System.out.println("Success");
+        }
+
+    }
+
+
 }
 

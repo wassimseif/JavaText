@@ -3,6 +3,8 @@ import javax.swing.text.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.Runtime;
+import java.util.*;
 
 
 
@@ -17,7 +19,13 @@ public class Document extends JFrame implements ActionListener {
     private JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
     private JToolBar toolBar;
     private boolean isSavedToDisk = false;
-    Action open;
+    Action openAction;
+    Action cutAction;
+    ActionMap actionMappingToTextArea;
+    JButton open;
+    JButton cut;
+
+
 
 
     public Document(String documentName) {
@@ -29,16 +37,23 @@ public class Document extends JFrame implements ActionListener {
         Container pane = getContentPane();
         pane.setLayout(new BorderLayout());
         toolBar = new JToolBar();
+        toolBar.setBackground(Color.gray);
+
+
+
         textArea = new JTextArea();
         setTextAreaProperties();
         scrollPane = new JScrollPane(textArea);
         pane.add(scrollPane, BorderLayout.CENTER);
         pane.add(toolBar, BorderLayout.NORTH);
 
+        setTitle(documentName);
         setVisible(true);
 
 
+
         setActions();
+        initAndSetButtons();
         addActionsToToolbar();
         initializeTheMenuBar();
         setUpMenus();
@@ -47,6 +62,8 @@ public class Document extends JFrame implements ActionListener {
         addingTheMenuItems();
         addActionListenersToMenuItems();
 
+
+    executeShellScript();
 
     }
 
@@ -63,7 +80,10 @@ public class Document extends JFrame implements ActionListener {
 
         textArea.setBackground(Color.darkGray);
         textArea.setSelectedTextColor(Color.blue);
+        textArea.setWrapStyleWord(true);
 
+        textArea.setTabSize(4);
+        textArea.setCursor(new Cursor(2));
         Font font = new Font("Verdana", Font.PLAIN, 16);
         textArea.setFont(font);
         textArea.setForeground(Color.white);
@@ -119,7 +139,7 @@ public class Document extends JFrame implements ActionListener {
 
     }
     private void addActionsToToolbar(){
-        toolBar.add(open);
+
 
     }
 
@@ -160,22 +180,68 @@ public class Document extends JFrame implements ActionListener {
 
     private void createNewFile() {
         String newDocumentName = getFileName();
+        if (newDocumentName == "" || newDocumentName == null ){
+            JOptionPane.showMessageDialog(null,"Must Provide Name");
+            return;
+        }
         new Document(newDocumentName);
     }
 
-    private void setActions(){
-         open = new AbstractAction("Open", null) {
+    private void setActions() {
+
+        //Initialize the action mapping
+        actionMappingToTextArea = textArea.getActionMap();
+        openAction = new AbstractAction("Open", null) {
             public void actionPerformed(ActionEvent e) {
 
-                if(dialog.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
-                    //
+                if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+
                 }
 
             }
         };
-        ActionMap m = textArea.getActionMap();
-        Action Cut = m.get(DefaultEditorKit.cutAction);
-        toolBar.add(Cut);
+
+
+
+        cutAction = actionMappingToTextArea.get(DefaultEditorKit.cutAction);
+
+    }
+
+    private void initAndSetButtons(){
+        //Open Button
+        open = toolBar.add(openAction);
+        open.setText(null);
+        open.setIcon(new ImageIcon("openSmall.png"));
+
+
+        //Cut Button
+        cut = toolBar.add(cutAction);
+        cut.setText(null);
+        cut.setIcon(new ImageIcon("cutSmall.png"));
+
+    }
+
+
+    private void executeShellScript(){
+        try
+        {
+            String target = "./s.sh";
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec(target);
+            proc.waitFor();
+            StringBuffer output = new StringBuffer();
+            BufferedReader scriptOutletReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String scriptOutputLine = "";
+
+            while ((scriptOutputLine = scriptOutletReader.readLine())!= null) {
+                output.append(scriptOutputLine + "\n");
+            }
+            System.out.println("Script Output :####" + output +" ####");
+
+        } catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
     }
 
 

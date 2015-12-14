@@ -3,10 +3,6 @@ import javax.swing.text.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.Runtime;
-import java.util.*;
-
-
 
 public class Document extends JFrame implements ActionListener {
     private JTextArea textArea;
@@ -14,22 +10,19 @@ public class Document extends JFrame implements ActionListener {
     private JMenu menuFile, menuEdit, menuJava;
     private JScrollPane scrollPane;
     private String documentName;
-    private JMenuItem copyMenuItem, pasteMenuItem, saveMenuItem, saveAsMenuItem, compileFileMenuItem, compileSelectedMenuitem,
+    private JMenuItem copyMenuItem, pasteMenuItem, saveMenuItem, saveAsMenuItem, compileFileMenuItem, compileSelectedMenuItem,
             runFileMenuItem, runSelectedMenuItem, newFileMenuItem;
     private JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
     private JToolBar toolBar;
     private boolean isSavedToDisk = false;
-    Action openAction;
-    Action cutAction;
     ActionMap actionMappingToTextArea;
-    JButton open;
-    JButton cut;
-
-
-
+    JButton open,cut, compile;
+    Action openAction,cutAction, compileAction;
 
     public Document(String documentName) {
+
         super(documentName);
+        this.documentName = documentName;
 
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -50,8 +43,6 @@ public class Document extends JFrame implements ActionListener {
         setTitle(documentName);
         setVisible(true);
 
-
-
         setActions();
         initAndSetButtons();
         addActionsToToolbar();
@@ -63,10 +54,9 @@ public class Document extends JFrame implements ActionListener {
         addActionListenersToMenuItems();
 
 
-    executeShellScript();
+
 
     }
-
 
     private void addActionListenersToMenuItems() {
         newFileMenuItem.addActionListener(this);
@@ -78,12 +68,12 @@ public class Document extends JFrame implements ActionListener {
 
     private void setTextAreaProperties() {
 
+
         textArea.setBackground(Color.darkGray);
         textArea.setSelectedTextColor(Color.blue);
         textArea.setWrapStyleWord(true);
 
-        textArea.setTabSize(4);
-        textArea.setCursor(new Cursor(2));
+
         Font font = new Font("Verdana", Font.PLAIN, 16);
         textArea.setFont(font);
         textArea.setForeground(Color.white);
@@ -116,7 +106,7 @@ public class Document extends JFrame implements ActionListener {
         pasteMenuItem = new JMenuItem("Paste");
         copyMenuItem = new JMenuItem("Copy");
         compileFileMenuItem = new JMenuItem("Compile File");
-        compileSelectedMenuitem = new JMenuItem("Compile Selected");
+        compileSelectedMenuItem = new JMenuItem("Compile Selected");
         runFileMenuItem = new JMenuItem("Run File");
         runSelectedMenuItem = new JMenuItem("Run Selected");
 
@@ -132,18 +122,19 @@ public class Document extends JFrame implements ActionListener {
         menuEdit.add(copyMenuItem);
         menuEdit.add(pasteMenuItem);
         menuJava.add(compileFileMenuItem);
-        menuJava.add(compileSelectedMenuitem);
+        menuJava.add(compileSelectedMenuItem);
         menuJava.add(runFileMenuItem);
         menuJava.add(runSelectedMenuItem);
 
 
     }
+
     private void addActionsToToolbar(){
 
 
     }
 
-    private Boolean saveAsFile() {
+    private boolean saveAsFile() {
         String sb = this.textArea.getText();
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("/home/me/Desktop"));
@@ -165,6 +156,7 @@ public class Document extends JFrame implements ActionListener {
         String documentName = (String) JOptionPane.showInputDialog(null, "Enter the file name:", "New File", JOptionPane.INFORMATION_MESSAGE);
         return documentName;
     }
+
     private boolean saveFileToDisk(){
 
         return false;
@@ -201,6 +193,12 @@ public class Document extends JFrame implements ActionListener {
             }
         };
 
+       compileAction = new AbstractAction() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               compileFile();
+           }
+       };
 
 
         cutAction = actionMappingToTextArea.get(DefaultEditorKit.cutAction);
@@ -219,31 +217,25 @@ public class Document extends JFrame implements ActionListener {
         cut.setText(null);
         cut.setIcon(new ImageIcon("cutSmall.png"));
 
+
+        //compile button
+        compile = toolBar.add(compileAction);
+        compile.setText("Compile");
+        compile.setIcon(null);
+
     }
 
-
-    private void executeShellScript(){
-        try
-        {
-            String target = "./s.sh";
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec(target);
-            proc.waitFor();
-            StringBuffer output = new StringBuffer();
-            BufferedReader scriptOutletReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String scriptOutputLine = "";
-
-            while ((scriptOutputLine = scriptOutletReader.readLine())!= null) {
-                output.append(scriptOutputLine + "\n");
-            }
-            System.out.println("Script Output :####" + output +" ####");
-
-        } catch (Throwable t)
-        {
-            t.printStackTrace();
-        }
+    public String getDocumentName(){
+        return this.documentName;
     }
 
+    private void compileFile(){
+
+
+        Compiler compiler = new Compiler(textArea.getText(),getDocumentName());
+
+
+    }
 
     public void actionPerformed(ActionEvent e) {
         JMenuItem menuItemSelected = (JMenuItem) e.getSource();
@@ -261,7 +253,6 @@ public class Document extends JFrame implements ActionListener {
         }
 
     }
-
 
 }
 

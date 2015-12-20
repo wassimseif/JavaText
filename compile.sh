@@ -1,1 +1,4 @@
-javac /Users/wassimseifeddine/Desktop/Main.java
+value=$(eval "javac Main.java") 
+
+
+echo $value

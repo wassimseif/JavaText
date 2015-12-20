@@ -72,7 +72,7 @@ public class Document extends JFrame implements ActionListener {
         textArea.setBackground(Color.darkGray);
         textArea.setSelectedTextColor(Color.blue);
         textArea.setWrapStyleWord(true);
-
+        textArea.setTabSize(2);
 
         Font font = new Font("Verdana", Font.PLAIN, 16);
         textArea.setFont(font);
@@ -232,7 +232,7 @@ public class Document extends JFrame implements ActionListener {
     private void compileFile(){
 
 
-        Compiler compiler = new Compiler(textArea.getText(),getDocumentName());
+         new Compiler(textArea.getText(),getDocumentName());
 
 
     }

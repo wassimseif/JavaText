@@ -1,51 +1,58 @@
 import java.io.*;
 import java.lang.Runtime;
-import java.nio.charset.Charset;
+
 
 public class Compiler {
 
     public static final String UTF8_BOM = "\uFEFF";
-    private enum  Job {
+
+    private enum Job {
         compileAll, compileSelectedWithoutWrapping, compileSelectedWithWrapping, Run
     }
+
     private String code;
     private long timeForDelay = 1000;
     private String documentName;
 
-    public Compiler(){
+    public Compiler() {
         System.out.print("You can't compile vacuum!");
         try {
             Thread.sleep(timeForDelay);
             System.out.print("Idiot!");
-        }catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-        return ;
+        return;
     }
-    public Compiler(String codeToCompile,String name){
+
+    public Compiler(String codeToCompile, String name) {
 
         this.code = codeToCompile;
         this.documentName = name;
-        System.out.println(code);
-       // executeShellScript(Job.compileAll);
-      if (createNewFile()){
+
+        // executeShellScript(Job.compileAll);
+        if (createNewFile()) {
             fillFile();
+            compileAllText();
+
         }
+
 
     }
 
-    private boolean createNewFile(){
+
+    private boolean createNewFile() {
         try {
 
             File file = new File(documentName);
 
 
-            if (file.createNewFile()){
-                System.out.println("File is created!" );
+            if (file.createNewFile()) {
+                System.out.println("File is created!");
                 return true;
-            }else{
+            } else {
                 System.out.println("File already exists.");
-                return false ;
+                return false;
             }
 
         } catch (IOException e) {
@@ -59,49 +66,61 @@ public class Compiler {
         try {
 
             code = code + System.getProperty("line.separator");
-           // code = code.replaceAll("\\s","");
+            // code = code.replaceAll("\\s","");
             code = code.replace("\n", "").replace("\r", "");
             File file = new File(documentName);
 
-           BufferedWriter  writer = new BufferedWriter(new FileWriter(file));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(code);
             writer.flush();
             writer.close();
 
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
 
-    public void compileAllText(){
+    public void compileAllText() {
         try {
-            String target = "./compile.sh";
+            String target = ("javac " + documentName);
             Runtime rt = Runtime.getRuntime();
             Process proc = rt.exec(target);
 
             proc.waitFor();
 
-            StringBuffer output = new StringBuffer();
-            BufferedReader scriptOutletReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String scriptOutputLine = "";
+            BufferedReader stdInput = new BufferedReader(new
+                    InputStreamReader(proc.getInputStream()));
 
-            while ((scriptOutputLine = scriptOutletReader.readLine())!= null) {
-                output.append(scriptOutputLine + "\n");
+            BufferedReader stdError = new BufferedReader(new
+                    InputStreamReader(proc.getErrorStream()));
+
+            // read the output from the command
+           // System.out.println("Here is the standard output of the command:\n");
+            String s = null;
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
             }
 
+            // read any errors from the attempted command
+           // System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+            runAll();
 
-        } catch (Throwable t)
-        {
+
+        } catch (Throwable t) {
             t.printStackTrace();
         }
+
 
     }
 
 
-    private void executeShellScript(Job job){
+    private void executeShellScript(Job job) {
 
-        switch (job){
+        switch (job) {
             case compileAll:
                 System.out.println("Should Compile");
                 compileAllText();
@@ -115,7 +134,6 @@ public class Compiler {
         }
 
 
-
     }
 
     private static String removeUTF8BOM(String s) {
@@ -125,4 +143,38 @@ public class Compiler {
         return s;
     }
 
+    private void runAll() {
+        try {
+            String target = ("java Main");
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec(target);
+
+            proc.waitFor();
+
+            BufferedReader stdInput = new BufferedReader(new
+                    InputStreamReader(proc.getInputStream()));
+
+            BufferedReader stdError = new BufferedReader(new
+                    InputStreamReader(proc.getErrorStream()));
+
+            // read the output from the command
+           // System.out.println("Here is the standard output of the command:\n");
+            String s = null;
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }
+
+            // read any errors from the attempted command
+            //System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+
+    }
 }

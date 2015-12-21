@@ -67,7 +67,7 @@ public class Compiler {
 
             code = code + System.getProperty("line.separator");
             // code = code.replaceAll("\\s","");
-            code = code.replace("\n", "").replace("\r", "");
+          //  code = code.replace("\n", "").replace("\r", "");
             File file = new File(documentName);
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
@@ -107,7 +107,7 @@ public class Compiler {
             while ((s = stdError.readLine()) != null) {
                 System.out.println(s);
             }
-            runAll();
+            run();
 
 
         } catch (Throwable t) {
@@ -143,7 +143,7 @@ public class Compiler {
         return s;
     }
 
-    private void runAll() {
+    private void run() {
         try {
             String target = ("java Main");
             Runtime rt = Runtime.getRuntime();
@@ -177,4 +177,14 @@ public class Compiler {
 
 
     }
+
+    private void comipleSelected(){
+
+
+
+    }
+
+
+
+
 }

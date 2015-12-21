@@ -71,6 +71,9 @@ public class Document extends JFrame implements ActionListener {
 
         textArea.setBackground(Color.darkGray);
         textArea.setSelectedTextColor(Color.blue);
+
+        textArea.setCaretColor(Color.white);
+        textArea.setMargin(new Insets(10,10,10,10) );
         textArea.setWrapStyleWord(true);
         textArea.setTabSize(2);
 

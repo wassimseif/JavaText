@@ -1,12 +1,16 @@
+import javax.swing.*;
 import java.io.*;
 import java.lang.Runtime;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Compiler {
 
+
     public static final String UTF8_BOM = "\uFEFF";
 
-    private enum Job {
+    public enum Job {
         compileAll, compileSelectedWithoutWrapping, compileSelectedWithWrapping, Run
     }
 
@@ -25,17 +29,32 @@ public class Compiler {
         return;
     }
 
-    public Compiler(String codeToCompile, String name) {
+    public Compiler(String codeToCompile, String name, Job job) {
 
         this.code = codeToCompile;
         this.documentName = name;
 
-        // executeShellScript(Job.compileAll);
-        if (createNewFile()) {
-            fillFile();
-            compileAllText();
+        if (!createNewFile()) {
+            System.out.println("File Already exists! when are you planning to fix me ?");
 
+            return;
         }
+
+
+        switch (job){
+            case compileAll:
+                fillFile();
+                compileAllText();
+            case compileSelectedWithoutWrapping:
+
+                code = wrapSelectedText();
+                System.out.println(code);
+                System.out.println("\n\n\n");
+
+                fillFile();
+                compileAllText();
+        }
+
 
 
     }
@@ -78,6 +97,13 @@ public class Compiler {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public String wrapSelectedText(){
+        code = Constants.getCompileSelectedFirstPart() + code;
+        code =  code + Constants.getGetCompileSelectedSecondPart() ;
+
+        return code;
     }
 
 

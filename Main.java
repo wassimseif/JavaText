@@ -1,23 +1,13 @@
 public class Main{
 
-	public static void main(String[] args){
+	public static void main (String[] args){
 
-
-
-		System.out.println("Hello");
-		Test x  = new Test();
-	}
+		System.out.println("Hello,Wordls");
 }
+public void printer(){
 
-class Test {
-
-	public Test(){
-
-		System.out.println("Wassim");
+	System.out.println("Printer");
 
 
-	}
-
-
-
+}
 }

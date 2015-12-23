@@ -23,7 +23,7 @@ public class Main{
 
 //        String documentName = (String) JOptionPane.showInputDialog(null,"Enter the file name:","New File", JOptionPane.INFORMATION_MESSAGE);
 
-        Document doc = new Document("Main.java");
+        new Document("Main.java");
 
     }
 }
